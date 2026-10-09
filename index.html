@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIM SPP - Rumah Quran Abdillah Ar-Rasyid</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar no-print">
+    <div class="brand">
+      <div class="brand-logo">RQA</div>
+      <div class="brand-text">
+        <strong>Rumah Quran</strong>
+        <span>Abdillah Ar-Rasyid</span>
+      </div>
+    </div>
+    <nav class="menu">
+      <button class="menu-item active" data-tab="dashboard"><span>📊</span> Dashboard</button>
+      <button class="menu-item" data-tab="santri"><span>👥</span> Data Santri</button>
+      <button class="menu-item" data-tab="spp"><span>💰</span> Pembayaran SPP</button>
+      <button class="menu-item" data-tab="pengeluaran"><span>💸</span> Pengeluaran</button>
+      <button class="menu-item" data-tab="kas"><span>📒</span> Kas Umum</button>
+      <button class="menu-item" data-tab="laporan"><span>📄</span> Laporan</button>
+      <button class="menu-item" data-tab="backup"><span>💾</span> Backup</button>
+    </nav>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <main class="content">
+
+    <!-- DASHBOARD -->
+    <section id="tab-dashboard" class="tab active">
+      <div class="page-head">
+        <div>
+          <h1>Dashboard</h1>
+          <p>Ringkasan keuangan Rumah Quran Abdillah Ar-Rasyid</p>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat-card green">
+          <span class="stat-label">Total Santri Aktif</span>
+          <span class="stat-value" id="statSantri">0</span>
+        </div>
+        <div class="stat-card blue">
+          <span class="stat-label">Pemasukan Bulan Ini</span>
+          <span class="stat-value" id="statMasuk">Rp 0</span>
+        </div>
+        <div class="stat-card red">
+          <span class="stat-label">Pengeluaran Bulan Ini</span>
+          <span class="stat-value" id="statKeluar">Rp 0</span>
+        </div>
+        <div class="stat-card gold">
+          <span class="stat-label">Saldo Kas</span>
+          <span class="stat-value" id="statSaldo">Rp 0</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Rekap SPP Bulan Ini</h3>
+        </div>
+        <div id="dashboardTagihan"></div>
+      </div>
+    </section>
+
+    <!-- SANTRI -->
+    <section id="tab-santri" class="tab">
+      <div class="page-head">
+        <div>
+          <h1>Data Santri</h1>
+          <p>Kelola data santri Rumah Quran</p>
+        </div>
+        <button class="btn-primary no-print" onclick="bukaFormSantri()">+ Tambah Santri</button>
+      </div>
+
+      <div class="card">
+        <div class="toolbar no-print">
+          <input id="cariSantri" placeholder="🔍 Cari nama / NIS / wali..." oninput="renderSantri()">
+          <select id="filterStatus" onchange="renderSantri()">
+            <option value="">Semua Status</option>
+            <option value="aktif">Aktif</option>
+            <option value="nonaktif">Nonaktif</option>
+          </select>
+          <span class="counter" id="counterSantri">0 santri</span>
+        </div>
+
+        <div class="table-wrap">
+          <table id="tabelSantri">
+            <thead>
+              <tr>
+                <th width="50">No</th>
+                <th>NIS</th>
+                <th>Nama Santri</th>
+                <th>Wali</th>
+                <th>No. WA</th>
+                <th>Tarif SPP</th>
+                <th>Status</th>
+                <th width="140" class="no-print">Aksi</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPP -->
+    <section id="tab-spp" class="tab">
+      <div class="page-head">
+        <div>
+          <h1>Pembayaran SPP</h1>
+          <p>Catat pembayaran SPP santri</p>
+        </div>
+        <button class="btn-primary no-print" onclick="bukaFormSpp()">+ Catat Pembayaran</button>
+      </div>
+
+      <div class="card">
+        <div class="toolbar no-print">
+          <input id="cariSpp" placeholder="🔍 Cari nama / NIS / no. kwitansi..." oninput="renderSpp()">
+          <input id="filterBulanSpp" type="month" onchange="renderSpp()">
+          <select id="filterMetode" onchange="renderSpp()">
+            <option value="">Semua Metode</option>
+            <option>Tunai</option>
+            <option>Transfer</option>
+            <option>QRIS</option>
+          </select>
+          <span class="counter" id="counterSpp">0 transaksi</span>
+        </div>
+
+        <div class="table-wrap">
+          <table id="tabelSpp">
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>No. Kwitansi</th>
+                <th>NIS</th>
+                <th>Nama</th>
+                <th>Bulan</th>
+                <th>Nominal</th>
+                <th>Metode</th>
+                <th width="110" class="no-print">Aksi</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- PENGELUARAN -->
+    <section id="tab-pengeluaran" class="tab">
+      <div class="page-head">
+        <div>
+          <h1>Pengeluaran</h1>
+          <p>Catat pengeluaran operasional</p>
+        </div>
+        <button class="btn-primary no-print" onclick="bukaFormKeluar()">+ Tambah Pengeluaran</button>
+      </div>
+
+      <div class="card">
+        <div class="toolbar no-print">
+          <input id="cariKeluar" placeholder="🔍 Cari uraian..." oninput="renderKeluar()">
+          <input id="filterBulanKeluar" type="month" onchange="renderKeluar()">
+          <select id="filterKategoriKeluar" onchange="renderKeluar()">
+            <option value="">Semua Kategori</option>
+            <option>Honor Guru</option>
+            <option>Listrik/Air</option>
+            <option>Internet</option>
+            <option>ATK</option>
+            <option>Konsumsi</option>
+            <option>Kebersihan</option>
+            <option>Pemeliharaan</option>
+            <option>Transport</option>
+            <option>Kegiatan</option>
+            <option>Lain-lain</option>
+          </select>
+          <span class="counter" id="counterKeluar">0 transaksi</span>
+        </div>
+
+        <div class="table-wrap">
+          <table id="tabelKeluar">
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Kategori</th>
+                <th>Uraian</th>
+                <th>Nominal</th>
+                <th width="110" class="no-print">Aksi</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- KAS UMUM -->
+    <section id="tab-kas" class="tab">
+      <div class="page-head">
+        <div>
+          <h1>Kas Umum</h1>
+          <p>Mutasi kas masuk dan keluar</p>
+        </div>
+        <button class="btn-primary no-print" onclick="window.print()">🖨️ Cetak</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat-card green">
+          <span class="stat-label">Total Pemasukan</span>
+          <span class="stat-value" id="kasMasuk">Rp 0</span>
+        </div>
+        <div class="stat-card red">
+          <span class="stat-label">Total Pengeluaran</span>
+          <span class="stat-value" id="kasKeluar">Rp 0</span>
+        </div>
+        <div class="stat-card gold">
+          <span class="stat-label">Saldo Akhir</span>
+          <span class="stat-value" id="kasSaldo">Rp 0</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="toolbar no-print">
+          <input id="filterBulanKas" type="month" onchange="renderKas()">
+          <button class="btn-sm" onclick="document.getElementById('filterBulanKas').value='';renderKas()">Reset</button>
+        </div>
+
+        <div class="table-wrap">
+          <table id="tabelKas">
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Uraian</th>
+                <th>Kategori</th>
+                <th>Masuk</th>
+                <th>Keluar</th>
+                <th>Saldo</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- LAPORAN -->
+    <section id="tab-laporan" class="tab">
+      <div class="page-head">
+        <div>
+          <h1>Laporan Tunggakan SPP</h1>
+          <p>Rekap tagihan dan tunggakan per bulan</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="toolbar no-print">
+          <input id="lapBulan" type="month">
+          <button class="btn-primary" onclick="renderLaporan()">Tampilkan</button>
+          <button class="btn-sm" onclick="exportLaporanCsv()">⬇️ Export CSV</button>
+          <button class="btn-sm" onclick="window.print()">🖨️ Cetak</button>
+        </div>
+
+        <div class="stats" id="lapStats"></div>
+        <div id="hasilLaporan"></div>
+      </div>
+    </section>
+
+    <!-- BACKUP -->
+    <section id="tab-backup" class="tab">
+      <div class="page-head">
+        <h1>Backup & Restore</h1>
+      </div>
+
+      <div class="card">
+        <h3>Export Data</h3>
+        <p>Simpan seluruh data ke file. Lakukan rutin untuk keamanan.</p>
+        <button class="btn-primary" onclick="exportData()">⬇️ Export JSON</button>
+        <button class="btn-primary" onclick="exportSemuaCsv()">⬇️ Export Santri (CSV)</button>
+
+        <hr style="margin:22px 0;border:none;border-top:1px solid #eee;">
+
+        <h3>Import Data</h3>
+        <p>Pulihkan data dari file JSON. Data saat ini akan <b>diganti</b>.</p>
+        <label class="btn-primary file-label">
+          ⬆️ Pilih File JSON
+          <input type="file" id="fileImport" accept=".json" onchange="importData(event)" hidden>
+        </label>
+
+        <hr style="margin:22px 0;border:none;border-top:1px solid #eee;">
+
+        <h3 style="color:#b00020;">Zona Berbahaya</h3>
+        <p>Hapus semua data yang tersimpan di browser.</p>
+        <button class="btn-danger" onclick="hapusSemua()">🗑️ Hapus Semua Data</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ========== MODAL FORM SANTRI ========== -->
+<div id="modalSantri" class="modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modalSantriTitle">Tambah Santri</h3>
+      <button class="modal-close" onclick="tutupModal('modalSantri')">×</button>
+    </div>
+    <form id="formSantri" class="form-vertical">
+      <input type="hidden" id="santriIndex">
+      <div class="form-row">
+        <label>NIS *</label>
+        <input id="santriNis" required autocomplete="off">
+      </div>
+      <div class="form-row">
+        <label>Nama Santri *</label>
+        <input id="santriNama" required autocomplete="off">
+      </div>
+      <div class="form-row">
+        <label>Nama Wali</label>
+        <input id="santriWali" autocomplete="off">
+      </div>
+      <div class="form-row">
+        <label>No. WhatsApp Wali</label>
+        <input id="santriWa" placeholder="62812xxxxxxx" autocomplete="off">
+      </div>
+      <div class="form-row">
+        <label>Tarif SPP / bulan (Rp) *</label>
+        <input id="santriTarif" type="number" min="0" required>
+      </div>
+      <div class="form-row">
+        <label>Status</label>
+        <select id="santriStatus">
+          <option value="aktif">Aktif</option>
+          <option value="nonaktif">Nonaktif</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" onclick="tutupModal('modalSantri')">Batal</button>
+        <button type="submit" class="btn-primary">Simpan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ========== MODAL FORM SPP ========== -->
+<div id="modalSpp" class="modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Catat Pembayaran SPP</h3>
+      <button class="modal-close" onclick="tutupModal('modalSpp')">×</button>
+    </div>
+    <form id="formSpp" class="form-vertical">
+      <div class="form-row">
+        <label>Santri *</label>
+        <select id="sppNis" required></select>
+      </div>
+      <div class="form-row">
+        <label>Bulan SPP *</label>
+        <input id="sppBulan" type="month" required>
+      </div>
+      <div class="form-row">
+        <label>Nominal Bayar (Rp) *</label>
+        <input id="sppNominal" type="number" min="0" required>
+      </div>
+      <div class="form-row">
+        <label>Metode</label>
+        <select id="sppMetode">
+          <option>Tunai</option>
+          <option>Transfer</option>
+          <option>QRIS</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Keterangan</label>
+        <input id="sppKeterangan" placeholder="Opsional">
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" onclick="tutupModal('modalSpp')">Batal</button>
+        <button type="submit" class="btn-primary">Simpan & Kwitansi</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ========== MODAL FORM PENGELUARAN ========== -->
+<div id="modalKeluar" class="modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modalKeluarTitle">Tambah Pengeluaran</h3>
+      <button class="modal-close" onclick="tutupModal('modalKeluar')">×</button>
+    </div>
+    <form id="formKeluar" class="form-vertical">
+      <input type="hidden" id="keluarIndex">
+      <div class="form-row">
+        <label>Tanggal *</label>
+        <input id="keluarTanggal" type="date" required>
+      </div>
+      <div class="form-row">
+        <label>Kategori *</label>
+        <select id="keluarKategori" required>
+          <option>Honor Guru</option>
+          <option>Listrik/Air</option>
+          <option>Internet</option>
+          <option>ATK</option>
+          <option>Konsumsi</option>
+          <option>Kebersihan</option>
+          <option>Pemeliharaan</option>
+          <option>Transport</option>
+          <option>Kegiatan</option>
+          <option>Lain-lain</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Uraian *</label>
+        <input id="keluarUraian" required>
+      </div>
+      <div class="form-row">
+        <label>Nominal (Rp) *</label>
+        <input id="keluarNominal" type="number" min="0" required>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" onclick="tutupModal('modalKeluar')">Batal</button>
+        <button type="submit" class="btn-primary">Simpan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ========== MODAL KWITANSI ========== -->
+<div id="modalKwitansi" class="modal">
+  <div class="modal-box modal-kwitansi">
+    <div class="modal-head no-print">
+      <h3>Kwitansi</h3>
+      <button class="modal-close" onclick="tutupModal('modalKwitansi')">×</button>
+    </div>
+    <div id="kwitansiArea"></div>
+    <div class="form-actions no-print">
+      <button class="btn-secondary" onclick="tutupModal('modalKwitansi')">Tutup</button>
+      <button class="btn-primary" onclick="window.print()">🖨️ Cetak</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
